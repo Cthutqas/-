@@ -14,5 +14,9 @@ print_params(**values_dict)
 values_list_2 = [123, 'Сергей']
 print_params(*values_list_2, 42)
 
+print_params()
+
+print_params(0, 1, 2, 3, 65)
+
 
 
