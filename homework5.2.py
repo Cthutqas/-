@@ -1,10 +1,13 @@
 class House():
 
     def __init__(self):
-        self.numberOfFloors = 12
-    def elevator(self):
-        for floor in range(1, self.numberOfFloors + 1):
-            print('Текущий этаж равен ', floor)
+        self.numberOfFloors = 0
+    def setNewNumberOfFloors(self, floors=3):
+        self.numberOfFloors = floors
+        print("Number of Floors: ", self.numberOfFloors)
 
-my_house = House()
-my_house.elevator()
+home = House()
+
+print(home.numberOfFloors)
+home.setNewNumberOfFloors(10)
+home.setNewNumberOfFloors()
