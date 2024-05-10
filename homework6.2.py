@@ -13,9 +13,9 @@ class Vehicle ():
 class Car():
     def __init__(self):
         self.prise = 1000000
+        self.PowerOfCars = 190
 
     def horse_powers(self):
-        self.PowerOfCars = 190
         return 'мощность', self.PowerOfCars
 
 
@@ -23,9 +23,9 @@ class Nissan(Vehicle, Car):
     def __init__(self):
         self.vehicle_type = "off-road vehicle"
         self.prise = 1058930
+        self.PowerOfCars = 200
 
     def horse_powers(self):
-        self.PowerOfCars = 200
         return 'мощность', self.PowerOfCars
 
 car = Nissan()
@@ -33,6 +33,5 @@ print('Ниссан')
 print(car.horse_powers())
 print('тип', car.vehicle_type)
 print('цена', car.prise)
-
 
 
