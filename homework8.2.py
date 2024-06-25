@@ -25,10 +25,10 @@ def f(a):
 def f_1(a):
     if a == 9:
         raise InvalidDataException('мое исключение 1', 'extra_info_1')
-        # print(f'Мое исключение', 'не верные данные')
+
     if a == 13:
         raise ProcessingException('мое исключение 2', 'extra_info_2')
-        # print('И это мое исключение', ' просто не люблю эту цифру')
+
 
 for a in list:
 
