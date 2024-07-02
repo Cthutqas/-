@@ -8,22 +8,25 @@
 # процессы не завершаться.
 # Для установки интервала в 1 секунду используйте функцию sleep() из модуля time, предварительно
 # импортировав его.
+
 from threading import Thread
 from time import sleep
-n_1 = [1, 11]
-n_2 = ['a', 'j']
-res = []
-def func(*args, **kwargs):
-    for i in range(*args, **kwargs):
-        res.append(i)
 
-thr_first = Thread(target=func, args=n_1)
-thr_second = Thread(target=func, args=n_2)
+def print_numbers():
+    for i in range(1, 11):
+        print(i)
+        sleep(1)
 
-thr_first.start(), sleep(1)
-thr_second.start(), sleep(1)
+def print_letters():
+    for char in range(ord('a'), ord('j')):
+        print(chr(char))
+        sleep(1)
+
+thr_first = Thread(target=print_numbers)
+thr_second = Thread(target=print_letters)
+
+thr_first.start()
+thr_second.start()
 
 thr_first.join()
 thr_second.join()
-
-print(res)
