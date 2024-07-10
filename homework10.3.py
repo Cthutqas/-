@@ -6,28 +6,30 @@
 
 from threading import Thread, Lock
 
-lock = Lock()
-
-class BankAccount(Thread):
+class BankAccount:
     def __init__(self):
-        Thread.__init__(self)
-    def run(self):
-        deposit_task(self)
-        withdraw_task(self)
+        self.balance = 1000
+        self.lock = Lock()
 
-account = BankAccount()
+    def deposit(self, amount):
+        with self.lock:
+            self.balance += amount
+            print(f'Deposited {amount}, new balance is {self.balance}')
+
+    def withdraw(self, amount):
+        with self.lock:
+            self.balance -= amount
+            print(f'Withdrew {amount}, new balance is {self.balance}')
 
 def deposit_task(account, amount):
-    for i in range(5):
-        with lock:
-            account.deposit(amount)
-    print(f'Deposited {account.deposit}, new balance is {1000 + account.deposit}')
+    for _ in range(5):
+        account.deposit(amount)
 
 def withdraw_task(account, amount):
-    for i in range(5):
-        with lock:
-            account.withdraw(amount)
-    print(f'Withdrew {account.withdraw}, new balance is {1500 - account.withdraw}')
+    for _ in range(5):
+        account.withdraw(amount)
+
+account = BankAccount()
 
 deposit_thread = Thread(target=deposit_task, args=(account, 100))
 withdraw_thread = Thread(target=withdraw_task, args=(account, 150))
@@ -37,3 +39,5 @@ withdraw_thread.start()
 
 deposit_thread.join()
 withdraw_thread.join()
+
+print(f'Final balance is {account.balance}')
