@@ -32,34 +32,47 @@ class Table:
     def __init__(self, number):
         self.number = number
         self.is_busy = False
+
 class Cafe:
-    def __init__(self, tables):
+    def __init__(self, num_tables):
         self.queue = Queue()
-        self.tables = tables
+        self.tables = Queue()
+        for i in range(num_tables):
+            self.tables.put(Table(i + 1))
+        self.customers_served = 0  # Счетчик обслуженных посетителей
+        self.customer_number = 1    # Счетчик прибывших посетителей
+        self.max_customers = 20     # Максимальное количество посетителей
 
     def customer_arrival(self):
-        customer_number = 1
-        while customer_number <= 20:
-            print(f"Посетитель номер {customer_number} прибыл.")
-            customer_thread = Customer(customer_number, self)
+        while self.customer_number <= self.max_customers:
+            print(f"Посетитель номер {self.customer_number} прибыл.")
+            customer_thread = Customer(self.customer_number, self)
             customer_thread.start()
-            customer_number += 1
+            self.customer_number += 1
             time.sleep(1)
 
     def serve_customer(self, customer):
-        table_found = False
-        for table in self.tables:
-            if not table.is_busy:
-                table.is_busy = True
-                print(f"Посетитель номер {customer.number} сел за стол {table.number}.")
-                time.sleep(5)  # Время обслуживания 5 секунд
-                table.is_busy = False  # Освободили столик после обслуживания
-                print(f"Посетитель номер {customer.number} покушал и ушёл.")
-                table_found = True
-                break
-        if not table_found:
-            print(f"Посетитель номер {customer.number} ожидает свободный стол.")
+        table = self.tables.get()
+        while table.is_busy:
+            self.tables.put(table)
+            table = self.tables.get()
 
+        table.is_busy = True
+        print(f"Посетитель номер {customer.number} сел за стол {table.number}.")
+        time.sleep(5)
+        table.is_busy = False
+        print(f"Посетитель номер {customer.number} покушал и ушёл.")
+        self.tables.put(table)
+        self.customers_served += 1  # Увеличиваем счетчик обслуженных посетителей
+
+    def enqueue_customer(self, customer):
+        self.queue.put(customer)
+        print(f"Посетитель номер {customer.number} ожидает свободный стол.")
+
+    def dequeue_customer(self):
+        if not self.queue.empty():
+            customer = self.queue.get()
+            self.serve_customer(customer)
 
 class Customer(threading.Thread):
     def __init__(self, number, cafe):
@@ -68,21 +81,22 @@ class Customer(threading.Thread):
         self.cafe = cafe
 
     def run(self):
-        self.cafe.serve_customer(self)
-
+        self.cafe.enqueue_customer(self)
+        self.cafe.dequeue_customer()
 
 # Создаем столики в кафе
-table1 = Table(1)
-table2 = Table(2)
-table3 = Table(3)
-tables = [table1, table2, table3]
-
-# Инициализируем кафе
-cafe = Cafe(tables)
+num_tables = 3
+cafe = Cafe(num_tables)
 
 # Запускаем поток для прибытия посетителей
 customer_arrival_thread = threading.Thread(target=cafe.customer_arrival)
 customer_arrival_thread.start()
 
-# Ожидаем завершения работы прибытия посетителей
+# Ожидаем завершения работы всех потоков-посетителей
 customer_arrival_thread.join()
+
+# Дожидаемся завершения обслуживания всех 20 посетителей
+while cafe.customers_served < cafe.max_customers:
+    time.sleep(1)
+
+print("Обслуживание всех посетителей завершено.")
