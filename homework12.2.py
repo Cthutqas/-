@@ -90,7 +90,6 @@ class TournamentTest(unittest.TestCase):
 
         turn_1 = Tournament(90, self.runer_1, self.runer_3)
         result = turn_1.start()
-        print(result[list(result.keys())[-1]] == 'Ник')
         self.all_results['test_turn1'] = result
 
     def test_turn2(self):
@@ -102,6 +101,7 @@ class TournamentTest(unittest.TestCase):
         turn_3 = Tournament(90, self.runer_1, self.runer_2, self.runer_3)
         result = turn_3.start()
         self.all_results['test_turn3'] = result
+        
 if __name__ == '__main__':
     unittest.main
 
